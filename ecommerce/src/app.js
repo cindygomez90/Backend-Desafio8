@@ -39,7 +39,7 @@ app.use (router)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
-    console.log('Tercera entrega del Proyecto Final')
+    console.log('Desafío: Mocking y manejo de errores')
 } )
 
 const io = new Server (httpServer)
