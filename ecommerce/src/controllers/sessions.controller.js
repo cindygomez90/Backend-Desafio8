@@ -50,7 +50,10 @@ class SessionController {
                 token   
             })
         } catch (error) {
-            responses.send ({status:'error', error:error.message})        
+            responses.send ({
+                status:'error', 
+                error:error.message
+            })        
         }
     }
 

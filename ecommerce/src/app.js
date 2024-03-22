@@ -38,7 +38,7 @@ app.use(passport.initialize())
 app.use (router)
 
 //se pasa un middleware para el manejo de errores 
-app.use(handleErrors)
+//app.use(handleErrors)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
