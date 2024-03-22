@@ -37,6 +37,9 @@ app.use(passport.initialize())
 //llamado al archivo router
 app.use (router)
 
+//se pasa un middleware para el manejo de errores 
+app.use(handleErrors)
+
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
     console.log('Desafío: Mocking y manejo de errores')

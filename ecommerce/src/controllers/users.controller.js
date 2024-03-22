@@ -30,10 +30,26 @@ class UserController {
         }
     }
     
-    createUser = async (request, responses)=>{
+    createUser = async (request, responses)=>{      //async (req, res, next)=>{
         try {
             const { first_name, last_name, email, password } = request.body
             
+            
+            //si alguno de los campos no viene se va a instanciar el error
+            /*if(!first_name || !last_name || !email) {
+                CustomError.createError({
+                    name: "User creation error",
+                    cause: generateUserErrorInfo({
+                        first_name,
+                        last_name,
+                        email
+                    }),
+                    message: 'Error truing to created user',
+                    code: EErrors.INVALID_TYPE_ERROR
+                })
+            }*/
+
+
             const newUser = {
                 first_name,
                 last_name,
@@ -43,12 +59,12 @@ class UserController {
             
             const result = await this.userService.createUser (newUser)
     
-            responses.send({
+            responses.status(200).send({
                 status: 'success',
-                result
+                usersCreate: result
             })
         } catch (error) {
-            console.log(error)
+            console.log(error)  //next(error)
         }
     }
     
