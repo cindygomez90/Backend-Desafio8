@@ -1,4 +1,8 @@
-    const { productService } = require ('../repositories/index.js')
+const { productService } = require ('../repositories/index.js')
+const { CustomError } = require ('../utils/errors/customError.js')
+const { EErrors } = require ('../utils/errors/enums.js')
+const { generateProductErrorInfo } = require ('../utils/errors/info.js')
+
 
     class ProductController {
 
@@ -74,9 +78,20 @@
             }
         }
         
-        createProduct = async (request, responses)=>{                
+        createProduct = async (request, responses, next)=>{                
             try {                               
                 const productNew  = request.body
+
+                //si alguno de los campos no viene se va a instanciar el error
+                if (!productNew.title || !productNew.price || !productNew.stock) {
+                    CustomError.createError({
+                        name: 'Error en la creación de proucto',
+                        cause: generateProductErrorInfo(productNew),
+                        message: 'Error al intentar crear el producto',
+                        code: EErrors.PRODUCT_CREATION_ERROR
+                    })
+                }
+
                 const result = await this.productService.createProduct (productNew)
         
                 responses.send({
@@ -84,10 +99,7 @@
                     result
                 })
             } catch (error) {
-                responses.status(500).send({
-                    status: 'error',
-                    message: 'Error interno del servidor'
-                })
+                next(error)  
             }
         }
         

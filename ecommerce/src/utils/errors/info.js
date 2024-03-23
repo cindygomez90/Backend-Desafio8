@@ -1,5 +1,3 @@
-//este sería el caso de cuando un usuario se registra y algún campo requerido no está completo
-
 const generateUserErrorInfo = (user) => {
     return `One or more properties where incomplete or not valid.
     List of require properties: 
@@ -9,6 +7,19 @@ const generateUserErrorInfo = (user) => {
     `
 }
 
-module.exports = {
-    generateUserErrorInfo
+const generateProductErrorInfo = (product) => {
+    return `One or more properties were incomplete or not valid.
+    List of required properties: 
+        * name: needs to be a String, received ${product.title}
+        * price: needs to be a Number, received ${product.price}
+        * description: needs to be a String, received ${product.stock}   
+    `
 }
+
+const generateCartErrorInfo = (cartId, productId) => {
+    let info = `Cart ID: ${cartId}, Product ID: ${productId}`;
+    return info
+}
+
+
+module.exports = { generateUserErrorInfo, generateProductErrorInfo, generateCartErrorInfo }

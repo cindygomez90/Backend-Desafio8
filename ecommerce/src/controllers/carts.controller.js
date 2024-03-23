@@ -1,5 +1,9 @@
     const { cartService, productService, ticketService } = require ('../repositories/index.js')
     const { generateUniqueCode } = require ('../utils/uniqueCode.js')
+    const { CustomError } = require ('../utils/errors/customError.js')
+    const { EErrors } = require ('../utils/errors/enums.js')
+    const { generateCartErrorInfo  } = require ('../utils/errors/info.js')
+
 
     class CartController {
 
@@ -9,7 +13,7 @@
             this.ticketService = ticketService
         }
 
-        createCart = async (req, res)=> {
+        createCart = async (req, res, next)=> {
             try {
                 const result = await this.cartService.createCart ()
         
@@ -19,6 +23,14 @@
                 })
             } catch (error) {
                 console.error('Error al crear el carrito:', error)
+
+                CustomError.createError({
+                    name: "Error de carrito",
+                    cause: 'Unknown',
+                    message: 'Error al crear el carrito',
+                    code: EErrors.CREATE_CART_ERROR
+                })
+
                 res.status(500).json ("Error al crear el carrito")
                 }
             }
@@ -41,19 +53,38 @@
                 const { cid, pid } = req.params        
                 const cart = await this.cartService.getCart(cid)
         
-                if (!cart) {
+                /*if (!cart) {
                     return res.status(404).json({
                         status: 'error',
                         message: 'No se encuentra el carrito indicado',
                     })
+                }*/
+
+                if (!cart) {
+                    CustomError.createError({
+                        name: "Error de carrito",
+                        cause: generateCartErrorInfo(cid, null),
+                        message: 'Carrito no encontrado',
+                        code: EErrors.CART_NOT_FOUND
+                    })
                 }
+
         
                 const product = await this.productService.getProduct (pid)
-                if (!product) {
+                /*if (!product) {
                     return res.status(404).json({
                         status: 'error',
                         message: 'No se encuentra el producto indicado',
-                    });
+                    })
+                }*/
+
+                if (!product) {
+                    CustomError.createError({
+                        name: "Error de carrito",
+                        cause: generateCartErrorInfo(cid, pid),
+                        message: 'Producto no encontrado',
+                        code: EErrors.PRODUCT_NOT_FOUND
+                    })
                 }
 
                 const productIndex = cart.products.findIndex(p => p.product.equals(pid))
@@ -76,6 +107,14 @@
                 })
             } catch (error) {
                 console.log(error)
+
+                CustomError.createError({
+                    name: "Error de carrito",
+                    cause: generateCartErrorInfo(req.params.cid, req.params.pid),
+                    message: 'Error al agregar el producto al carrito',
+                    code: EErrors.ADD_PRODUCT_ERROR
+                })
+
                 res.status(500).json({
                     status: 'error',
                     message: 'Error al agregar el producto al carrito',
