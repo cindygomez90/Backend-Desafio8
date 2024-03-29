@@ -11,6 +11,7 @@ const passport = require('passport')
 const { initializePassport } = require('./config/initializePassport.config.js')
 const MongoStore = require ('connect-mongo')
 const { configObject } = require ('./config/connectDB.js')
+const { handleErrors } = require ('./middleware/errors-midd/index.js')
 
 const app = express()
 const PORT = configObject.port
@@ -37,8 +38,7 @@ app.use(passport.initialize())
 //llamado al archivo router
 app.use (router)
 
-//se pasa un middleware para el manejo de errores 
-//app.use(handleErrors)
+app.use(handleErrors)
 
 //configuración socket del lado del server
 const httpServer = app.listen(PORT, () => {
